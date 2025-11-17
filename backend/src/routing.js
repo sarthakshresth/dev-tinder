@@ -48,47 +48,75 @@ const app = express();
 
 
 
-app.get("getcall", (req, resp) => {
-    resp.send("response from the server");
-})
+// app.get("getcall", (req, resp) => {
+//     resp.send("response from the server");
+// })
 
-app.get(/ab+c/, (req, resp) => {
-    resp.send("response from the server");
-})
+// app.get(/ab+c/, (req, resp) => {
+//     resp.send("response from the server");
+// })
 
-// /a(bc repeated N times)(d repeated M times)/
-app.get(/a(bc)+d/, (req, resp) => {
-    resp.send("response from the server");
-})
+// // /a(bc repeated N times)(d repeated M times)/
+// app.get(/a(bc)+d/, (req, resp) => {
+//     resp.send("response from the server");
+// })
 
-// rejex
-app.get(/.*fly$/, (req, resp) => {
-    resp.send("response from the server");
-})
+// // rejex
+// app.get(/.*fly$/, (req, resp) => {
+//     resp.send("response from the server");
+// })
 
-// reading query parameters
-app.get("test", (req, resp) => {
-    console.log(req.query);
+// // reading query parameters
+// app.get("test", (req, resp) => {
+//     console.log(req.query);
     
-    resp.send({firstname: "sarthak", lastname: "shresth"});
-})
+//     resp.send({firstname: "sarthak", lastname: "shresth"});
+// })
 
-// another method
-app.get("/test1/:userId/:password/:name", (req, resp) => {
-    console.log(req.params);
+// // another method
+// app.get("/test1/:userId/:password/:name", (req, resp) => {
+//     console.log(req.params);
     
-    resp.send({firstname: "sarthak", lastname: "shresth"});
-})
+//     resp.send({firstname: "sarthak", lastname: "shresth"});
+// })
 
-app.post("/postcall", (req, resp) => {
-    resp.send({firstname: "sarthak", lastname: "shresth"});
-})
+// app.post("/postcall", (req, resp) => {
+//     resp.send({firstname: "sarthak", lastname: "shresth"});
+// })
+
+
+
+// route
+app.use(
+    "/user", 
+    (req, resp, next) => {
+        // if i am sending no response then the server will respond nothing when i make request
+
+        // resp.send("response")
+
+        next();
+
+        // resp.send("response2"); // this will send an error since the http connection is already closed
+    },
+
+    // one route can have multiple route handlers
+    (req, resp, next) => {
+        resp.send("response1");
+
+        next(); // this will throw error if previously no response was sent but wont throw an error if any resp was sent..
+    }
+
+    // we can also wrap routehandlers inside an array (some or all at a time) : dosent create any difference
+
+    // if the first route handler is sending resp then it will only send response... no other will send
+    // if first in not sending then we need to call next()
+)
+
+
 
 app.listen(4000, () => {
     console.log("server is listening");
 });
-
-
 
 // nodemon : automatically restarts the server
 // npm i -g nodemon
